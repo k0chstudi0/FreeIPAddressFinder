@@ -126,7 +126,11 @@ def index():
             else:
                 formatted_ip += ('free',)
             # Process decorators
-            if ip in dhcp_ip_addresses:
+            if ip == ipv4_network.network_address:
+                formatted_ip += ('networkaddress',)
+            elif ip == ipv4_network.broadcast_address:
+                formatted_ip += ('broadcastaddress',)
+            elif ip in dhcp_ip_addresses:
                 formatted_ip += ('dhcp',)
             else:
                 formatted_ip += ('',)

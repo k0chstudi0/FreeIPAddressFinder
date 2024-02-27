@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Free IP Address Finder</title>
     <style>
+        .column {
+            float: left;
+            width: 32%;
+        }
+        /* Clear floats after the columns */
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
         .legend {
             display: grid;
             grid-template-columns: 30px auto;
@@ -17,8 +27,7 @@
         }
         .grid {
             display: grid;
-            grid-template-columns: repeat(50, 30px); /* Adjust the number of columns as needed */
-            grid-template-rows: repeat(6, 30px); /* Three rows for up to 100 IP addresses each */
+            grid-template-columns: repeat(50, 30px);
             gap: 5px;
         }
         .square {
@@ -39,10 +48,17 @@
             background-color: yellow;
         }
         /* Decorators */
+        .broadcastaddress {
+            background-color: darkgrey;
+            color: lightgrey;
+        }
         .dhcp {
-            /*font-weight: bold;*/
             border-top-width: thick;
             height: 26px;
+        }
+        .networkaddress {
+            background-color: darkgrey;
+            color: lightgrey;
         }
         /* Tooltip container */
         .tooltip {
@@ -75,11 +91,22 @@
 <body>
     <h1>Free IP Address Finder</h1>
     <h2>Legend</h1>
-    <div class="legend">
-        <div class="square online">n</div><div class="description">= <b>Online/used</b> (ICMP response received)</div>
-        <div class="square unclear">n</div><div class="description">= <b>Offline but might be used</b> (ICMP response received within the last 90 days)</div>
-        <div class="square free">n</div><div class="description">= <b>Offline/usused</b> (no ICMP response received within the last 90 days)</div>
-        <div class="square dhcp">n</div><div class="description">= <b>DHCP address</b></div>
+    <div class="row">
+        <div class="column">
+            <h3>Status</h3>
+            <div class="legend">
+                <div class="square online">n</div><div class="description">= <b>Online/used</b> (ICMP response received)</div>
+                <div class="square unclear">n</div><div class="description">= <b>Offline but might be used</b> (ICMP response received within the last 90 days)</div>
+                <div class="square free">n</div><div class="description">= <b>Offline/usused</b> (no ICMP response received within the last 90 days)</div>
+            </div>
+        </div>
+        <div class="column">
+            <h3>Decorators</h3>
+            <div class="legend">
+                <div class="square networkaddress">n</div><div class="description">= <b>Network or broadcast address</b></div>
+                <div class="square dhcp">n</div><div class="description">= <b>DHCP address</b></div>
+            </div>
+        </div>
     </div>
     {% for network in ips.keys() %}
     <h2>Status {{network}}</h1>
@@ -101,7 +128,7 @@
                     </span>
                 </div>
             {% else %}
-                <div class="square free{{ ' dhcp' if 'dhcp' in decorator else '' }}">{{ ip.split('.')[-1] }}
+                <div class="square free {{decorator}}">{{ ip.split('.')[-1] }}
                 </div>
             {% endif %}
         {% endfor %}

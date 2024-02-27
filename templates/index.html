@@ -28,14 +28,21 @@
             line-height: 30px;
             border: 1px solid black;
         }
-        .green {
+        /* Status indication*/
+        .free {
+            background-color: lightgrey;
+        }
+        .online {
             background-color: lightgreen;
         }
-        .orange {
+        .unclear {
             background-color: yellow;
         }
-        .grey {
-            background-color: lightgrey;
+        /* Decorators */
+        .dhcp {
+            /*font-weight: bold;*/
+            border-top-width: thick;
+            height: 26px;
         }
         /* Tooltip container */
         .tooltip {
@@ -69,30 +76,32 @@
     <h1>Free IP Address Finder</h1>
     <h2>Legend</h1>
     <div class="legend">
-        <div class="square green">n</div><div class="description">= <b>Online/used</b> (ICMP response received)</div>
-        <div class="square orange">n</div><div class="description">= <b>Offline but might be used</b> (ICMP response received within the last 90 days)</div>
-        <div class="square grey">n</div><div class="description">= <b>Offline/usused</b> (no ICMP response received within the last 90 days)</div>
+        <div class="square online">n</div><div class="description">= <b>Online/used</b> (ICMP response received)</div>
+        <div class="square unclear">n</div><div class="description">= <b>Offline but might be used</b> (ICMP response received within the last 90 days)</div>
+        <div class="square free">n</div><div class="description">= <b>Offline/usused</b> (no ICMP response received within the last 90 days)</div>
+        <div class="square dhcp">n</div><div class="description">= <b>DHCP address</b></div>
     </div>
     {% for network in ips.keys() %}
     <h2>Status {{network}}</h1>
     <div class="grid">
-        {% for ip, last_up, last_down, status in ips[network] %}
+        {% for ip, last_up, last_down, status, decorator in ips[network] %}
             {% if status == 'online' %}
-                <div class="square green tooltip">{{ ip.split('.')[-1] }}
+
+                <div class="square online tooltip{{ ' dhcp' if 'dhcp' in decorator else '' }}">{{ ip.split('.')[-1] }}
                     <span class="tooltiptext">
                         Last up: {{last_up.split('.')[0]}} <br>
                         Last down: {{last_down.split('.')[0]}}
                     </span>
                 </div>                
             {% elif status == 'unclear' %}
-                <div class="square orange tooltip">{{ ip.split('.')[-1] }}
+                <div class="square unclear tooltip{{ ' dhcp' if 'dhcp' in decorator else '' }}">{{ ip.split('.')[-1] }}
                     <span class="tooltiptext">
                         Last up: {{last_up.split('.')[0]}} <br>
                         Last down: {{last_down.split('.')[0]}}
                     </span>
                 </div>
             {% else %}
-                <div class="square grey">{{ ip.split('.')[-1] }}
+                <div class="square free{{ ' dhcp' if 'dhcp' in decorator else '' }}">{{ ip.split('.')[-1] }}
                 </div>
             {% endif %}
         {% endfor %}
